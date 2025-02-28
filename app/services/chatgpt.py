@@ -39,3 +39,40 @@ The output will be executed on the system and the results analyzed for further i
     )
     print (completion.choices[0].message.content)
     return completion.choices[0].message.content
+
+
+def generate_analyze(commands_output, sceanrio_2):
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": f"""
+You are an expert Digital Forensics and Incident Response (DFIR) analyst with extensive cybersecurity experience.
+
+TASK:
+- Analyze the provided `{commands_output}` based on `{sceanrio_2}`.
+- Identify any **suspicious or malicious indicators** (e.g., ransomware, trojans, unauthorized access, lateral movement, persistence mechanisms).
+- Look for **patterns matching known MITRE ATT&CK techniques**.
+- Determine if any **anomalous behavior**, such as connections to **unknown IPs**, **execution of suspicious binaries**, or **registry modifications**, is present.
+
+ANALYSIS REQUIREMENTS:
+- Assess if any executed commands indicate **malicious activity** or unusual system behavior.
+- If the commands reveal suspicious files, processes, or connections, **explain why** they are dangerous.
+- Cross-reference findings with **MITRE ATT&CK tactics, techniques, and procedures (TTPs)**.
+- Assign a **maliciousness score from 1 to 100** (1 = Not Malicious, 100 = Extremely Malicious).
+- Justify the score with evidence found in the command output.
+- Please use the {commands_output} to understand if there is something malicious , the user {sceanrio_2} is just for the background , you need according to the commands output to understand the maliciouness of the commands.
+
+OUTPUT FORMAT:
+- **Threat Analysis:** [Explain if anything is suspicious and why]
+- **Indicators of Compromise (IoCs):** [List any suspicious files, IPs, registry modifications, or network activity]
+- **MITRE ATT&CK Mapping:** [List any relevant techniques, tactics, or procedures]
+- **Maliciousness Score:** [1-100]
+- **Conclusion & Recommendations:** [Provide a summary and next steps]
+
+Be precise, objective, and forensic-driven in your assessment.
+"""},
+            {"role": "user", "content": f"Please use the system command instruction to generate the analyzitation of the scenario following the commadns"},
+        ],
+    )
+    print (completion.choices[0].message.content)
+    return completion.choices[0].message.content
