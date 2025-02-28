@@ -1,0 +1,5 @@
+__pycache__/
+temp.xml
+.DS_Store
+app/__pycache__/
+app/services/__pycache__/
