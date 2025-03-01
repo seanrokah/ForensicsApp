@@ -7,6 +7,9 @@
 </head>
 <body>
     <h1>Welcome to ForensicsApp</h1>
+    
+    {% if step == "initial" or not step %}
+    <!-- Initial form to gather scenario info -->
     <form method="POST" action="/">
         <input type="text" name="scenario" placeholder="Enter forensic scenario" required>
         <div>
@@ -34,44 +37,46 @@
                 <option value="5" selected>5 Commands</option>
             </select>
         </div>
-        <div>
-            <p>Run commands?</p>
-            <label>
-                <input type="radio" name="user_approval" value="yes">
-                Yes
-            </label>
-            <label>
-                <input type="radio" name="user_approval" value="no" checked>
-                No
-            </label>
-        </div>
-        <div>
-            <p>Analyze command output?</p>
-            <label>
-                <input type="radio" name="analyze_approval" value="yes">
-                Yes
-            </label>
-            <label>
-                <input type="radio" name="analyze_approval" value="no" checked>
-                No
-            </label>
-        </div>
-        <button type="submit">Submit</button>
+        <button type="submit" name="generate_commands" value="1">Generate Commands</button>
     </form>
+    {% endif %}
     
-    {% if commands %}
+    {% if commands and step == "commands_generated" %}
     <h2>Investigation Commands:</h2>
     <pre>{{ commands }}</pre>
-    {% endif %}
-
-    {% if commands_output %}
-    <h2>Command Output:</h2>
-    <pre>{{ commands_output }}</pre>
+    
+    <!-- Form to run commands -->
+    <form method="POST" action="/">
+        <input type="hidden" name="hidden_scenario" value="{{ user_answer }}">
+        <input type="hidden" name="hidden_number_of_commands" value="{{ user_answer_number_of_commands }}">
+        <input type="hidden" name="hidden_os_type" value="{{ user_answer_os_type }}">
+        <input type="hidden" name="hidden_commands" value="{{ commands }}">
+        <button type="submit" name="run_commands" value="1">Run These Commands</button>
+    </form>
     {% endif %}
     
-    {% if analysis_output %}
+    {% if commands_output and step == "commands_executed" %}
+    <h2>Command Output:</h2>
+    <pre>{{ commands_output }}</pre>
+    
+    <!-- Form to analyze output -->
+    <form method="POST" action="/">
+        <input type="hidden" name="hidden_scenario" value="{{ user_answer }}">
+        <input type="hidden" name="hidden_number_of_commands" value="{{ user_answer_number_of_commands }}">
+        <input type="hidden" name="hidden_os_type" value="{{ user_answer_os_type }}">
+        <input type="hidden" name="hidden_commands" value="{{ commands }}">
+        <input type="hidden" name="hidden_output" value="{{ commands_output }}">
+        <button type="submit" name="analyze_output" value="1">Analyze Output</button>
+    </form>
+    {% endif %}
+    
+    {% if analysis_output and step == "analysis_complete" %}
     <h2>Analysis Results:</h2>
     <pre>{{ analysis_output }}</pre>
+    
+    <!-- Start new investigation button -->
+    <a href="/" class="button">Start New Investigation</a>
     {% endif %}
+    
 </body>
 </html>
